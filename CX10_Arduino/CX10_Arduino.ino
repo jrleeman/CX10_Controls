@@ -4,6 +4,10 @@
 #define ROLL_PIN 9
 #define LBUTTON_PIN 10
 #define RBUTTON_PIN 11
+#define MAX_OUT 174
+#define MIN_OUT 0
+#define MAX_IN 500
+#define MIN_IN -500
 
 int throttleValue;
 int pitchValue;
@@ -20,31 +24,25 @@ void setup() {
   pinMode(ROLL_PIN, OUTPUT);
   pinMode(LBUTTON_PIN, INPUT);
   pinMode(RBUTTON_PIN, INPUT);
+  digitalWrite(LBUTTON_PIN, LOW);
+  digitalWrite(RBUTTON_PIN, LOW);
 }
 
 void loop() {
-/*
-  // We could be starting anywhere. Wait for a newline, throwing things
-  // away until we find one.
-  while (Serial.available() > 0) {
-    if(Serial.read() == '\n'){
-      break;
-    }
-  }
-*/
-   // if there's any serial available, read it:
+
+  // If there's any serial data available, read it
   while (Serial.available() > 0) {
 
-    // look for the next valid integer in the incoming serial stream:
-    throttleValue = map(Serial.parseInt(), -500, 500, 0, 174);
-    //Serial.println(throttleValue);                 
-    pitchValue = map(Serial.parseInt(), -500, 500, 174, 0);
-    rollValue = map(Serial.parseInt(), -500, 500, 174, 0);
-    yawValue = map(Serial.parseInt(), -500, 500, 0, 174); 
+    // Look through the serial string and pull out our values
+    throttleValue = map(Serial.parseInt(), MIN_IN, MAX_IN, MIN_OUT, MAX_OUT);           
+    pitchValue = map(Serial.parseInt(), MIN_IN, MAX_IN, MAX_OUT, MIN_OUT);
+    rollValue = map(Serial.parseInt(), MIN_IN, MAX_IN, MAX_OUT, MIN_OUT);
+    yawValue = map(Serial.parseInt(), MIN_IN, MAX_IN, MIN_OUT, MAX_OUT); 
     leftbuttonValue = Serial.parseInt();
     rightbuttonValue = Serial.parseInt();
-    // look for the newline. That's the end of your
-    // sentence:
+    
+    // Look for the newline. That's the end of the
+    // sentence. Write out what we know.
     if (Serial.read() == '\n') {
       analogWrite(THROTTLE_PIN, throttleValue);
       analogWrite(PITCH_PIN, pitchValue);
@@ -53,23 +51,18 @@ void loop() {
        
       if (leftbuttonValue == 1) {
         pinMode(LBUTTON_PIN, OUTPUT);
-        digitalWrite(LBUTTON_PIN, LOW);
       }
       else {
-        digitalWrite(LBUTTON_PIN, HIGH);
         pinMode(LBUTTON_PIN, INPUT);
       }
 
       if (rightbuttonValue == 1) {
         pinMode(RBUTTON_PIN, OUTPUT);
-        digitalWrite(RBUTTON_PIN, LOW);
       }
       else {
-        digitalWrite(RBUTTON_PIN, HIGH);
         pinMode(RBUTTON_PIN, INPUT);
       }
-     
-          
+               
     }
   }
 }

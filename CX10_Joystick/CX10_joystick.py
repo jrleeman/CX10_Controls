@@ -8,7 +8,7 @@ pygame.init()
 
 # This is the serial port for the Arduino. Be sure
 # to change it for your particular setup.
-ser = serial.Serial('/dev/cu.usbmodem14111',115200)
+ser = serial.Serial('/dev/cu.usbmodem1411',115200)
 
 # Loop until the user clicks the close button.
 done = False
